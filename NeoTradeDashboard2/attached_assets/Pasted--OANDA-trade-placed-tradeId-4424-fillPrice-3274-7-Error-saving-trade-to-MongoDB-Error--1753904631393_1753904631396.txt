@@ -1,0 +1,47 @@
+✅ OANDA trade placed: { tradeId: '4424', fillPrice: 3274.7 }
+Error saving trade to MongoDB: Error: Trade validation failed: _id: Cast to ObjectId failed for value "d38d25d6-07b0-4f19-a460-7b726759288b" (type string) at path "_id" because of "BSONError"
+    at ValidationError.inspect (/home/runner/workspace/node_modules/mongoose/lib/error/validation.js:52:26)
+    at formatValue (node:internal/util/inspect:829:19)
+    at inspect (node:internal/util/inspect:372:10)
+    at formatWithOptionsInternal (node:internal/util/inspect:2325:40)
+    at formatWithOptions (node:internal/util/inspect:2187:10)
+    at console.value (node:internal/console/constructor:350:14)
+    at console.warn (node:internal/console/constructor:383:61)
+    at MongoService.saveTrade (/home/runner/workspace/server/services/mongodb.ts:59:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:126:7) {
+  errors: {
+    _id: CastError: Cast to ObjectId failed for value "d38d25d6-07b0-4f19-a460-7b726759288b" (type string) at path "_id" because of "BSONError"
+        at SchemaObjectId.cast (/home/runner/workspace/node_modules/mongoose/lib/schema/objectId.js:251:11)
+        at SchemaType.applySetters (/home/runner/workspace/node_modules/mongoose/lib/schemaType.js:1258:12)
+        at model.$set (/home/runner/workspace/node_modules/mongoose/lib/document.js:1438:22)
+        at model.$set (/home/runner/workspace/node_modules/mongoose/lib/document.js:1132:16)
+        at model.Document (/home/runner/workspace/node_modules/mongoose/lib/document.js:178:12)
+        at model.Model (/home/runner/workspace/node_modules/mongoose/lib/model.js:127:12)
+        at new model (/home/runner/workspace/node_modules/mongoose/lib/model.js:4837:15)
+        at MongoService.saveTrade (/home/runner/workspace/server/services/mongodb.ts:55:26)
+        at <anonymous> (/home/runner/workspace/server/routes.ts:126:26)
+        at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+      stringValue: '"d38d25d6-07b0-4f19-a460-7b726759288b"',
+      messageFormat: undefined,
+      kind: 'ObjectId',
+      value: 'd38d25d6-07b0-4f19-a460-7b726759288b',
+      path: '_id',
+      reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+          at new ObjectId (/home/runner/workspace/node_modules/bson/src/objectid.ts:120:15)
+          at castObjectId (/home/runner/workspace/node_modules/mongoose/lib/cast/objectid.js:25:12)
+          at SchemaObjectId.cast (/home/runner/workspace/node_modules/mongoose/lib/schema/objectId.js:249:12)
+          at SchemaType.applySetters (/home/runner/workspace/node_modules/mongoose/lib/schemaType.js:1258:12)
+          at model.$set (/home/runner/workspace/node_modules/mongoose/lib/document.js:1438:22)
+          at model.$set (/home/runner/workspace/node_modules/mongoose/lib/document.js:1132:16)
+          at model.Document (/home/runner/workspace/node_modules/mongoose/lib/document.js:178:12)
+          at model.Model (/home/runner/workspace/node_modules/mongoose/lib/model.js:127:12)
+          at new model (/home/runner/workspace/node_modules/mongoose/lib/model.js:4837:15)
+          at MongoService.saveTrade (/home/runner/workspace/server/services/mongodb.ts:55:26)
+          at <anonymous> (/home/runner/workspace/server/routes.ts:126:26)
+          at process.processTicksAndRejections (node:internal/process/task_queues:95:5),
+      valueType: 'string'
+    }
+  },
+  _message: 'Trade validation failed'
+}

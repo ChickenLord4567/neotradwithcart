@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+  
+  /* Neon colors */
+  --neon-cyan: hsl(180, 100%, 50%);
+  --neon-blue: hsl(207, 100%, 50%);
+  --neon-purple: hsl(271, 76%, 53%);
+  --dark-bg: hsl(237, 22%, 6%);
+  --card-bg: hsl(237, 22%, 11%);
+  --input-bg: hsl(217, 33%, 17%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased text-foreground;
+    background: linear-gradient(135deg, hsl(237, 22%, 6%) 0%, hsl(237, 22%, 11%) 50%, hsl(237, 22%, 6%) 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .neon-border {
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 10px hsla(180, 100%, 50%, 0.3), inset 0 0 10px hsla(180, 100%, 50%, 0.1);
+  }
+  
+  .neon-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+  
+  .pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { 
+      box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan);
+    }
+    50% { 
+      box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-cyan);
+    }
+  }
+  
+  .btn-neon-blue {
+    background: linear-gradient(45deg, hsl(207, 100%, 50%), hsl(225, 73%, 57%));
+    border: 1px solid hsl(207, 100%, 50%);
+    box-shadow: 0 0 15px hsla(207, 100%, 50%, 0.5);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-neon-blue:hover {
+    box-shadow: 0 0 25px hsla(207, 100%, 50%, 0.8);
+    transform: translateY(-2px);
+  }
+  
+  .btn-neon-purple {
+    background: linear-gradient(45deg, hsl(271, 76%, 53%), hsl(283, 100%, 67%));
+    border: 1px solid hsl(271, 76%, 53%);
+    box-shadow: 0 0 15px hsla(271, 76%, 53%, 0.5);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-neon-purple:hover {
+    box-shadow: 0 0 25px hsla(271, 76%, 53%, 0.8);
+    transform: translateY(-2px);
+  }
+  
+  .trade-card {
+    background: linear-gradient(135deg, hsla(237, 22%, 11%, 0.8) 0%, hsla(217, 33%, 17%, 0.8) 100%);
+    border: 1px solid hsla(180, 100%, 50%, 0.3);
+    backdrop-filter: blur(10px);
+  }
+  
+  .input-neon {
+    background: hsla(217, 33%, 17%, 0.7);
+    border: 1px solid hsla(180, 100%, 50%, 0.5);
+    box-shadow: inset 0 0 10px hsla(180, 100%, 50%, 0.1);
+  }
+  
+  .input-neon:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px hsla(180, 100%, 50%, 0.5), inset 0 0 10px hsla(180, 100%, 50%, 0.2);
+    outline: none;
+  }
+
+  .progress-bar-bg {
+    background: linear-gradient(90deg, hsla(207, 100%, 50%, 0.2) 0%, hsla(271, 76%, 53%, 0.2) 100%);
+  }
+
+  .font-cyber {
+    font-family: 'Orbitron', monospace;
+  }
+
+  .font-digital {
+    font-family: 'Rajdhani', sans-serif;
+  }
+}
