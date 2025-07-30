@@ -1,54 +1,86 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LogOut } from "lucide-react";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ChartPanel from "@/components/ChartPanel";
+import MarketSelector from "@/components/MarketSelector";
+import TimeframeSelector from "@/components/TimeframeSelector";
+import { fetchCandles, fetchLivePrice } from "@/services/chartApi";
 import TradeSetup from "@/components/trade-setup";
 import AccountOverview from "@/components/account-overview";
 import HistoricalAnalysis from "@/components/historical-analysis";
 import ActiveTrades from "@/components/active-trades";
 import RecentTrades from "@/components/recent-trades";
 
+const MARKETS = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY'];
+
 export default function Dashboard() {
   const [selectedInstrument, setSelectedInstrument] = useState("XAUUSD");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("1m");
+  const [candles, setCandles] = useState([]);
+  const [liveChartPrice, setLiveChartPrice] = useState<number | undefined>(undefined);
+
+  // -- MVP Chart Data Sync --
+  // Fetch chart candles when market or timeframe changes
+  useEffect(() => {
+    let mounted = true;
+    setCandles([]); // clear chart for quick feedback
+    fetchCandles(selectedInstrument, selectedTimeframe).then(data => {
+      if (mounted) setCandles(data);
+    });
+    return () => { mounted = false; }
+  }, [selectedInstrument, selectedTimeframe]);
+
+  // Poll for live chart price every 5s (for live price line)
+  useEffect(() => {
+    let mounted = true;
+    const poll = () => {
+      fetchLivePrice(selectedInstrument).then(data => {
+        if (mounted) setLiveChartPrice(data.last);
+      });
+    };
+    poll();
+    const interval = setInterval(poll, 5000);
+    return () => { mounted = false; clearInterval(interval); }
+  }, [selectedInstrument]);
+
+  // -- Other Dashboard Data --
   const { toast } = useToast();
 
-  // Fetch current price
+  // Fetch current price for trade setup/etc
   const { data: priceData, refetch: refetchPrice } = useQuery({
-    queryKey: ['/api/current-price', selectedInstrument],
-    refetchInterval: 2000, // Update every 2 seconds
+    queryKey: ["/api/current-price", selectedInstrument],
+    refetchInterval: 2000,
   });
 
   // Fetch active trades
   const { data: activeTrades, refetch: refetchActiveTrades } = useQuery({
-    queryKey: ['/api/trades/active'],
-    refetchInterval: 5000, // Update every 5 seconds
+    queryKey: ["/api/trades/active"],
+    refetchInterval: 5000,
   });
 
   // Fetch recent trades
   const { data: recentTrades } = useQuery({
-    queryKey: ['/api/trades/recent'],
+    queryKey: ["/api/trades/recent"],
   });
 
   // Fetch account balance
   const { data: accountData } = useQuery({
-    queryKey: ['/api/account-balance'],
+    queryKey: ["/api/account-balance"],
     refetchInterval: 5000,
   });
 
   // Fetch account stats
   const { data: accountStats } = useQuery({
-    queryKey: ['/api/account-stats'],
+    queryKey: ["/api/account-stats"],
     refetchInterval: 10000,
   });
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/auth/logout');
+      const response = await apiRequest("POST", "/api/auth/logout");
       return response.json();
     },
     onSuccess: () => {
@@ -71,17 +103,14 @@ export default function Dashboard() {
             <h1 className="text-2xl font-cyber font-bold text-cyan-400 neon-text">
               NEON TRADER
             </h1>
-            <Select value={selectedInstrument} onValueChange={setSelectedInstrument}>
-              <SelectTrigger className="input-neon w-32 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-cyan-400/50">
-                <SelectItem value="XAUUSD" className="text-white hover:bg-cyan-400/20">XAU/USD</SelectItem>
-                <SelectItem value="EURUSD" className="text-white hover:bg-cyan-400/20">EUR/USD</SelectItem>
-                <SelectItem value="GBPUSD" className="text-white hover:bg-cyan-400/20">GBP/USD</SelectItem>
-                <SelectItem value="USDJPY" className="text-white hover:bg-cyan-400/20">USD/JPY</SelectItem>
-              </SelectContent>
-            </Select>
+            <MarketSelector
+              selected={selectedInstrument}
+              onChange={setSelectedInstrument}
+            />
+            <TimeframeSelector
+              selected={selectedTimeframe}
+              onChange={setSelectedTimeframe}
+            />
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
@@ -104,19 +133,24 @@ export default function Dashboard() {
       </header>
 
       <main className="container mx-auto p-4 space-y-6">
+        {/* Chart Panel */}
+        <div className="mb-8">
+          <ChartPanel candles={candles} livePrice={liveChartPrice} />
+        </div>
+
         {/* Trade Setup */}
-        <TradeSetup 
+        <TradeSetup
           selectedInstrument={selectedInstrument}
           currentPrice={currentPrice}
           onTradeSuccess={() => {
             refetchActiveTrades();
-            queryClient.invalidateQueries({ queryKey: ['/api/trades/recent'] });
-            queryClient.invalidateQueries({ queryKey: ['/api/account-stats'] });
+            queryClient.invalidateQueries({ queryKey: ["/api/trades/recent"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/account-stats"] });
           }}
         />
 
         {/* Account Overview */}
-        <AccountOverview 
+        <AccountOverview
           accountBalance={accountData?.balance || 0}
           accountStats={accountStats}
         />
@@ -126,13 +160,13 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Active Trades */}
-          <ActiveTrades 
+          <ActiveTrades
             trades={activeTrades || []}
             currentPrice={currentPrice}
             onTradeClose={() => {
               refetchActiveTrades();
-              queryClient.invalidateQueries({ queryKey: ['/api/trades/recent'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/account-stats'] });
+              queryClient.invalidateQueries({ queryKey: ["/api/trades/recent"] });
+              queryClient.invalidateQueries({ queryKey: ["/api/account-stats"] });
             }}
           />
 
