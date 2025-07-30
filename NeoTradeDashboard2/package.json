@@ -99,6 +99,14 @@
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.1",
     "typescript": "5.6.3",
+    "lightweight-charts": "^4.1.0",      // or latest
+    "axios": "^1.6.8",                   // or latest
+    "react-lightweight-charts": "^2.0.0",// optional, only if you want the React wrapper
+    "express": "^4.19.2",                // backend
+    "node-cron": "^3.0.3",               // backend polling
+    "pg": "^8.11.1",                     // PostgreSQL client if you use it
+    "prisma": "^5.7.1",                  // optional ORM
+    "sequelize": "^6.35.1",               // alternative ORM, optional
     "vite": "^5.4.19"
   },
   "optionalDependencies": {
